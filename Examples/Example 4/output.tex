@@ -1,0 +1,83 @@
+\documentclass{article}
+% Package for using images
+    \usepackage{graphicx}
+
+% Code to handle lists
+    % Ensures nested ordered lists start at 1
+    \renewcommand{\theenumii}{\arabic{enumii}}
+    \renewcommand{\labelenumii}{\theenumii.}
+
+    % Ensures nested unordered lists are represented by a hollow circle like in Markdown
+    \renewcommand{\labelitemii}{$\circ$}
+
+% Remove section numbering as well
+    \renewcommand{\thesection}{}
+    \renewcommand{\thesubsection}{}
+    \renewcommand{\thesubsubsection}{}
+
+% Package and additional code for handling hyperlink formatting
+    \usepackage{hyperref}
+    \hypersetup{
+        colorlinks=true,
+        linkcolor=black,
+        filecolor=magenta,
+        urlcolor=blue,
+        pdftitle={Markdown Converted to LaTeX},
+        pdfpagemode=FullScreen,
+        }
+    \urlstyle{same}
+    \renewcommand{\UrlFont}{\normalfont\itshape\underline}
+    \usepackage[dvipsnames]{xcolor}
+
+% Package for handling block quotes
+    \usepackage{csquotes}
+
+\begin{document}
+
+% This removes page numbers from every page,
+% Markdown doesn't use them so we don't need them!
+    \pagestyle{empty}
+
+\section{Nested Lists and Emphasis}
+
+
+\subsection{Shopping List}
+
+\begin{enumerate}
+    \item Fruits
+\begin{itemize}
+    \item Apples
+    \item Oranges
+\end{itemize}
+    \item Dairy
+\begin{itemize}
+    \item Milk
+    \item Cheese
+\end{itemize}
+\end{enumerate}
+
+
+\subsection{Opposite Nesting}
+
+\begin{itemize}
+    \item Fruits
+\begin{enumerate}
+    \item Apples
+    \item Oranges
+\end{enumerate}
+    \item Dairy
+\begin{enumerate}
+    \item Milk
+    \item Cheese
+\end{enumerate}
+\end{itemize}
+
+
+\subsection{Emphasis Examples}
+
+\begin{itemize}
+    \item \textit{Italic text}
+    \item \textbf{Bold text}
+\end{itemize}
+
+\end{document}

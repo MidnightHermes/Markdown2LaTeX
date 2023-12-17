@@ -1,0 +1,85 @@
+\documentclass{article}
+% Package for using images
+    \usepackage{graphicx}
+
+% Code to handle lists
+    % Ensures nested ordered lists start at 1
+    \renewcommand{\theenumii}{\arabic{enumii}}
+    \renewcommand{\labelenumii}{\theenumii.}
+
+    % Ensures nested unordered lists are represented by a hollow circle like in Markdown
+    \renewcommand{\labelitemii}{$\circ$}
+
+% Remove section numbering as well
+    \renewcommand{\thesection}{}
+    \renewcommand{\thesubsection}{}
+    \renewcommand{\thesubsubsection}{}
+
+% Package and additional code for handling hyperlink formatting
+    \usepackage{hyperref}
+    \hypersetup{
+        colorlinks=true,
+        linkcolor=black,
+        filecolor=magenta,
+        urlcolor=blue,
+        pdftitle={Markdown Converted to LaTeX},
+        pdfpagemode=FullScreen,
+        }
+    \urlstyle{same}
+    \renewcommand{\UrlFont}{\normalfont\itshape\underline}
+    \usepackage[dvipsnames]{xcolor}
+
+% Package for handling block quotes
+    \usepackage{csquotes}
+
+\begin{document}
+
+% This removes page numbers from every page,
+% Markdown doesn't use them so we don't need them!
+    \pagestyle{empty}
+
+\section{This is a heading!}
+
+
+I can't believe this works :o
+
+
+Let's just keep this \textit{\textbf{Simple}}
+
+
+\textit{At least \textbf{For now}}
+
+
+\textit{what if} we nest \textbf{between?}
+
+
+\subsection{This is a \textit{subsection}}
+
+
+% Mixed Content within Lists
+
+\begin{enumerate}
+    \item Item 1
+\end{enumerate}
+
+\begin{itemize}
+    \item Item
+\end{itemize}
+
+\begin{enumerate}
+    \item Item with \textbf{bold} text
+\end{enumerate}
+
+\begin{itemize}
+    \item \includegraphics{/path/to/img.jpg}
+    \item \href{http://example.com}{Link}
+\end{itemize}
+
+
+% Lists with Incorrect Numbers
+
+\begin{enumerate}
+    \item First
+\end{enumerate}
+
+\end{document}

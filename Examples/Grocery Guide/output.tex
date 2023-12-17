@@ -1,0 +1,189 @@
+\documentclass{article}
+% Package for using images
+    \usepackage{graphicx}
+
+% Code to handle lists
+    % Ensures nested ordered lists start at 1
+    \renewcommand{\theenumii}{\arabic{enumii}}
+    \renewcommand{\labelenumii}{\theenumii.}
+
+    % Ensures nested unordered lists are represented by a hollow circle like in Markdown
+    \renewcommand{\labelitemii}{$\circ$}
+
+% Remove section numbering as well
+    \renewcommand{\thesection}{}
+    \renewcommand{\thesubsection}{}
+    \renewcommand{\thesubsubsection}{}
+
+% Package and additional code for handling hyperlink formatting
+    \usepackage{hyperref}
+    \hypersetup{
+        colorlinks=true,
+        linkcolor=black,
+        filecolor=magenta,
+        urlcolor=blue,
+        pdftitle={Markdown Converted to LaTeX},
+        pdfpagemode=FullScreen,
+        }
+    \urlstyle{same}
+    \renewcommand{\UrlFont}{\normalfont\itshape\underline}
+    \usepackage[dvipsnames]{xcolor}
+
+% Package for handling block quotes
+    \usepackage{csquotes}
+
+\begin{document}
+
+% This removes page numbers from every page,
+% Markdown doesn't use them so we don't need them!
+    \pagestyle{empty}
+
+\section{Grocery Shopping Guide}
+
+
+Welcome to the \textbf{Ultimate Grocery Shopping Guide}! In this guide, we'll cover everything you need to know about shopping for groceries efficiently and effectively.
+
+
+\subsection{Table of Contents}
+
+
+\begin{enumerate}
+    \item Planning Your Shopping Trip
+    \item Selecting Fresh Produce
+    \item Buying in Bulk
+    \item Understanding Food Labels
+    \item Budgeting for Groceries
+    \item Storing Groceries
+\end{enumerate}
+
+
+\_\hrulefill
+
+
+\subsubsection{Planning Your Shopping Trip}
+
+
+Planning your trip is crucial for a successful grocery shopping experience.
+
+
+\begin{itemize}
+    \item  \textbf{Make a List:} Always start with a \textit{shopping list}. This helps in avoiding impulse buys.
+    \item  \textbf{Hit the Right Store:} Finding a grocery store that fits your dietary needs is \textbf{crucial}. For example, \textit{Trader Joe's} offers many organic options.
+    \item  \textbf{Stay Loyal to your store:} If your grocery store of choice offers a loyalty program, take them up on it! For example, \textit{Harris Teeter} has a program which offers a 10 cent per gallon discount on fuel for every \$100 spent up to \$1 off.
+    \item  \textbf{Check for Deals:} Look for \textit{\textbf{coupons}} and discounts before you head out.
+\end{itemize}
+
+
+\enquote{\textbf{Tip:} Plan your meals for the week and make a list accordingly.}
+
+
+\paragraph{Budgeting for Groceries}
+
+
+\begin{itemize}
+    \item Set a budget to control your spending.
+    \item Compare prices online.
+\end{itemize}
+
+
+\paragraph{Selecting Fresh Produce}
+
+
+\begin{enumerate}
+    \item Look for fresh fruits and vegetables.
+    \item Check for ripeness and quality.
+\begin{itemize}
+    \item You can tell whether a pineapple is ripe by sniffing the bottom!
+\end{itemize}
+\end{enumerate}
+
+
+\_\hrulefill
+
+
+\subsubsection{Buying in Bulk}
+
+
+\textbf{Buying in bulk} can save money, but be cautious; it is easy to overbuy and then end up wasting food.
+
+
+\begin{itemize}
+    \item Don't buy perishables in bulk unless you're sure you can use them.
+\end{itemize}
+
+
+\paragraph{Understanding Food Labels}
+
+
+Reading food labels is important for health-conscious shopping.
+
+Understanding what the labels mean is just as important too!
+
+
+\begin{verbatim}
+Check the expiration date and nutritional information.
+\end{verbatim}
+
+
+\_\hrulefill
+
+
+\subsubsection{Storing Groceries}
+
+
+Proper storage extends the shelf life of your groceries.
+
+
+\begin{itemize}
+    \item Refrigerate perishables immediately.
+    \item Store grains and spices in airtight containers.
+\end{itemize}
+
+
+\paragraph{Useful Links}
+
+
+\begin{itemize}
+    \item \href{https://www.healthyeating.org/}{Healthy Eating}
+    \item \href{https://www.budgeting101$\backslash$.com/}{Budgeting Tips}
+\end{itemize}
+
+
+\_\hrulefill
+
+
+\subsubsection{Example Shopping List}
+
+
+\begin{itemize}
+    \item Fruits
+\begin{enumerate}
+    \item Apples
+    \item Oranges
+\end{enumerate}
+    \item Dairy
+\begin{enumerate}
+    \item Milk
+    \item Cheese
+\end{enumerate}
+    \item Bakery
+\begin{enumerate}
+    \item Bread
+    \item Bagels
+\end{enumerate}
+\end{itemize}
+
+
+\_\hrulefill
+
+
+\subsubsection{Showing off other Features}
+
+\begin{verbatim}
+Not grocery related sorry :(
+\end{verbatim}
+
+
+Multiline code looks like that and inline code looks like \texttt{this}!
+
+\end{document}

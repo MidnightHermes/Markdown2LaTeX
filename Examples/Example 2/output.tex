@@ -1,0 +1,179 @@
+\documentclass{article}
+% Package for using images
+    \usepackage{graphicx}
+
+% Code to handle lists
+    % Ensures nested ordered lists start at 1
+    \renewcommand{\theenumii}{\arabic{enumii}}
+    \renewcommand{\labelenumii}{\theenumii.}
+
+    % Ensures nested unordered lists are represented by a hollow circle like in Markdown
+    \renewcommand{\labelitemii}{$\circ$}
+
+% Remove section numbering as well
+    \renewcommand{\thesection}{}
+    \renewcommand{\thesubsection}{}
+    \renewcommand{\thesubsubsection}{}
+
+% Package and additional code for handling hyperlink formatting
+    \usepackage{hyperref}
+    \hypersetup{
+        colorlinks=true,
+        linkcolor=black,
+        filecolor=magenta,
+        urlcolor=blue,
+        pdftitle={Markdown Converted to LaTeX},
+        pdfpagemode=FullScreen,
+        }
+    \urlstyle{same}
+    \renewcommand{\UrlFont}{\normalfont\itshape\underline}
+    \usepackage[dvipsnames]{xcolor}
+
+% Package for handling block quotes
+    \usepackage{csquotes}
+
+\begin{document}
+
+% This removes page numbers from every page,
+% Markdown doesn't use them so we don't need them!
+    \pagestyle{empty}
+
+% Basic text
+
+Hello
+
+Hello World
+
+
+% Simple Bold and Italics
+
+\textit{Italics}
+
+\textbf{Bold}
+
+\textit{\textbf{BOTH}}
+
+\textit{Italics}
+
+\textbf{Bold}
+
+\textit{\textbf{BOTH}}
+
+\textbf{Mix}
+
+\textbf{And}
+
+\textit{\textbf{Match}}
+
+
+% Simple Headings
+
+\section{section}
+
+\subsection{subsection}
+
+\subsubsection{subsubsection}
+
+\paragraph{paragraph}
+
+\paragraph{paragraph}
+
+\paragraph{paragraph}
+
+
+% Nested Styling
+
+\textbf{\textit{Mixed} Styling}
+
+\textbf{Bold \textit{Italic}}
+
+\textit{Italic \textbf{Bold}}
+
+\textit{\textbf{BoldItalic}}
+
+
+% Escaped Characters
+
+*Not Bold*
+
+Escaped \# Hashtag
+
+[.*\_-+!?$>$")(``]
+
+[Hello]
+
+
+% Mixed Content within Lists
+
+\begin{enumerate}
+    \item Item 1
+\end{enumerate}
+
+\begin{itemize}
+    \item Item
+\end{itemize}
+
+\begin{enumerate}
+    \item Item with \textbf{bold} text
+\end{enumerate}
+
+\begin{itemize}
+    \item \includegraphics{/path/to/img.jpg}
+    \item \href{http://example.com}{Link}
+\end{itemize}
+
+
+% Lists with Incorrect Numbers
+
+\begin{enumerate}
+    \item First
+\end{enumerate}
+
+
+% Blockquotes with Nested Formatting
+
+\enquote{    \textbf{Bold Quote}
+    \textit{Italic Quote}}
+
+
+% Code Blocks and Inline Code
+
+\begin{verbatim}
+code block
+\end{verbatim}
+
+\texttt{inline code}
+
+
+% Links with Titles
+
+\href{https://www.google.com}{Google}
+
+
+% Incorrectly Formatted Markdown
+
+*Unclosed Italics
+
+-UnordList without space
+
+
+% Headers with Different Styling
+
+\section{Header with \textbf{Bold}}
+
+
+
+% Images with Alt Text
+
+\includegraphics{/path/to/img.jpg}
+
+
+% Horizontal Rules
+
+\_\hrulefill
+
+\_\hrulefill
+
+\_\hrulefill
+
+\end{document}
