@@ -17,7 +17,7 @@ To install the converter, follow these steps:
 1. Clone the repository: `git clone \[repository URL\]`  
 2. Navigate to the repository directory: `cd \[repository name\]`  
 3. Run the compiler: `make convert`  
-    * Run `make clean` to remove all the `output.tex` files (NOTE: The converter overwrites `output.tex` anyways)  
+    * Run `make clean` to remove all the `output.tex` files \(NOTE: The converter overwrites `output.tex` anyways\)  
 5. Compile your new `output.tex` file!  
 
 ## How it Works  
