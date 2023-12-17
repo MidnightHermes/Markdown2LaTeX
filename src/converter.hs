@@ -455,14 +455,11 @@ reformatEnv []       = return ()
 reformatEnv [x]      = appendFile "output.tex" x
 reformatEnv (x:y:zs) | ((x == "\\end{enumerate}") && (y == "\\begin{enumerate}")) = reformatEnv zs
                      | ((x == "\\end{itemize}")   && (y == "\\begin{itemize}"))   = reformatEnv zs
-                     | ((x == "\\end{enumerate}") && (y == "") && not (null zs) && not (null zs) && (head zs == "\\begin{enumerate}")) = reformatEnv (tail zs)
+                     | ((x == "\\end{enumerate}") && (y == "") && not (null zs) && (head zs == "\\begin{enumerate}")) = reformatEnv (tail zs)
                      | ((x == "\\end{itemize}")   && (y == "") && not (null zs) && (head zs == "\\begin{itemize}"))   = reformatEnv (tail zs)
+                     | (x == "    \\item \\begin{itemize}")   = reformatEnv ("\\begin{itemize}"   : y : zs)
+                     | (x == "    \\item \\begin{enumerate}") = reformatEnv ("\\begin{enumerate}" : y : zs)
                      | otherwise = do
-                                     -- if "    \\item \\begin{itemize}" `isPrefixOf` x
-                                     -- then appendFile "output.tex" ((take 10 x))
-                                     -- else if "    \\item \\begin{enumerate}" `isPrefixOf` x
-                                     -- then appendFile "output.tex" ((take 10 x))
-                                     -- else appendFile "output.tex" x
                                      appendFile "output.tex" x
                                      appendFile "output.tex" "\n"
                                      reformatEnv (y:zs)
@@ -479,134 +476,133 @@ appendProcess markdownStructures = concatMap processEach markdownStructures
 
 -- Tests!
 
--- test = and (lineLexerTests ++ lineParserTests ++ parseLineTests)
---
--- lineLexerTests = [
---   lineLexer "Hello" == [ContentT "Hello"]
---   , lineLexer " Hello" == [ContentT " ",ContentT "Hello"]
---   , lineLexer " Hello " == [ContentT " ",ContentT "Hello",ContentT " "]
---   , lineLexer "Hello " == [ContentT "Hello",ContentT " "]
---   , lineLexer "# Hi" == [Hash,ContentT " ",ContentT "Hi"]
---   , lineLexer "# Hi  " == [Hash,ContentT " ",ContentT "Hi",ReturnT]
---   , lineLexer "## Hi  " == [Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
---   , lineLexer "### Hi  " == [Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
---   , lineLexer "#### Hi  " == [Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
---   , lineLexer "##### Hi  " == [Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
---   , lineLexer "###### Hi  " == [Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
---   , lineLexer "####### Hi  " == [Hash,Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
---   , lineLexer "**Hi**" == [Asterisk,Asterisk,ContentT "Hi",Asterisk,Asterisk]
---   , lineLexer "_Hello_" == [UScore,ContentT "Hello",UScore]
---   , lineLexer "`MDStruc`" == [Tick,ContentT "MDStruc",Tick]
---   , lineLexer "    Tabbed!" == [Tab,ContentT "Tabbed",ContentT "!"]
---   , lineLexer "[]" == [LBra,RBra]
---   , lineLexer "[Hello]" == [LBra,ContentT "Hello",RBra]
---   , lineLexer "[.*_-+!?]" == [LBra,Dot,Asterisk,UScore,Dash,Plus,ContentT "!",ContentT "?",RBra]
---   , lineLexer "()" == [LPar,RPar]
---   , lineLexer "\"To be or not to be\"" == [Quo,ContentT "To",ContentT " ",ContentT "be",ContentT " ",ContentT "or",ContentT " ",ContentT "not",ContentT " ",ContentT "to",ContentT " ",ContentT "be",Quo]
---   , lineLexer "  " == [ReturnT]
---   , lineLexer "Return  " == [ContentT "Return",ReturnT]
---   , lineLexer "  Returned" == [ReturnT,ContentT "Returned"]
---   , lineLexer "> Quote this  " == [BlockQuote,ContentT " ",ContentT "Quote",ContentT " ",ContentT "this",ReturnT]
---   , lineLexer "1" == [ContentT "1"]
---   , lineLexer "I like the number 3" == [ContentT "I",ContentT " ",ContentT "like",ContentT " ",ContentT "the",ContentT " ",ContentT "number",ContentT " ",ContentT "3"]
---   , lineLexer "1. " == [List 1,ContentT " "]
---   , lineLexer "2003\\." == [ContentT "2",ContentT "0",ContentT "0",ContentT "3",ContentT "\\",Dot]
---   ]
---
--- lineParserTests = [
---   lineParser [ContentT "Hello"] == Left (Content "Hello")
---   , lineParser [ContentT " ",ContentT "Hello",ContentT " "] == Left (Content " Hello ")
---   , lineParser [ContentT " ",ContentT "Hello"] == Left (Content " Hello")
---   , lineParser [ContentT "Hello",ContentT " "] == Left (Content "Hello ")
---   , lineParser [Hash,ContentT " ",ContentT "Hi"] == Right "Line Parsing error: [PT (Content \" Hi\"),Hash]"
---   , lineParser [Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 1 (Content "Hi"))
---   , lineParser [Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 2 (Content "Hi"))
---   , lineParser [Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 3 (Content "Hi"))
---   , lineParser [Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 4 (Content "Hi"))
---   , lineParser [Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 5 (Content "Hi"))
---   , lineParser [Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 6 (Content "Hi"))
---   , lineParser [Hash,Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Right "Line Parsing error: [PT (Heading 6 (Content \"Hi\")),Hash]"
---   , lineParser [Hash,Hash,Hash,ContentT " ",ContentT "#",ReturnT] == Left (Heading 3 (Content "#"))
---   , lineParser [Asterisk,Asterisk,ContentT "Hi",Asterisk,Asterisk] == Left (Bold (Right (Content "Hi")))
---   , lineParser [UScore,ContentT "Hello",UScore] == Left (Italics (Right (Content "Hello")))
---   , lineParser [Tick,ContentT "MDStruc",Tick] == Left (Monospace "MDStruc")
---   , lineParser [Tab,ContentT "Tabbed",ContentT "!",ReturnT] == Left (Code (Right (Content "Tabbed!")))
---   , lineParser [LBra,RBra] == Left (Content "[]")
---   , lineParser [LBra,ContentT "Hello",RBra] == Right "Line Parsing error: [RBra,PT (Content \"Hello\"),LBra]"
---   , lineParser [ContentT "[Hello]"] == Left (Content "[Hello]")
---   , lineParser [LBra,Dot,Asterisk,UScore,Dash,Plus,ContentT "!",ContentT "?",RBra] == Right "Line Parsing error: [RBra,PT (Content \"!?\"),Plus,Dash,UScore,Asterisk,Dot,LBra]"
---   , lineParser [ContentT "[.*_-+!?]"] == Left (Content "[.*_-+!?]")
---   , lineParser [LPar,RPar] == Left (Content "()")
---   , lineParser [Quo,ContentT "To",ContentT " ",ContentT "be",ContentT " ",ContentT "or",ContentT " ",ContentT "not",ContentT " ",ContentT "to",ContentT " ",ContentT "be",Quo] == Left (Content "\"To be or not to be\"")
---   , lineParser [ReturnT] == Right "Line Parsing error: [ReturnT]"
---   , lineParser [ContentT "Return",ReturnT] == Right "Line Parsing error: [ReturnT,PT (Content \"Return\")]"
---   , lineParser [ReturnT,ContentT "Returned"] == Right "Line Parsing error: [PT (Content \"Returned\"),ReturnT]"
---   , lineParser [BlockQuote,ContentT " ",ContentT "Quote",ContentT " ",ContentT "this",ReturnT] == Left (Block (Just (Content "Quote this")))
---   , lineParser [ContentT "1"] == Left (Content "1")
---   , lineParser [ContentT "I",ContentT " ",ContentT "like",ContentT " ",ContentT "the",ContentT " ",ContentT "number",ContentT " ",ContentT "3"] == Left (Content "I like the number 3")
---   , lineParser [List 1,ContentT " ",ContentT "Hi",ReturnT] == Left (OrdListStart (Content "Hi"))
---   , lineParser [ContentT "2",ContentT "0",ContentT "0",ContentT "3",Dot] == Left (Content "2003.")
---   ]
---
--- parseLineTests = [
---   -- Basic text
---   parseMarkdownLine "Hello" == Left (Content "Hello")
---   , parseMarkdownLine "Hello World" == Left (Content "Hello World")
---
---   -- Simple Bold and Italics
---   , parseMarkdownLine "*HI*" == Left (Italics (Right (Content "HI")))
---   , parseMarkdownLine "**HI**" == Left (Bold (Right (Content "HI")))
---   , parseMarkdownLine "***HI***" == Left (Italics (Right (Bold (Right (Content "HI")))))
---   , parseMarkdownLine "_HI_" == Left (Italics (Right (Content "HI")))
---   , parseMarkdownLine "__HI__" == Left (Bold (Right (Content "HI")))
---   , parseMarkdownLine "___HI___" == Left (Italics (Right (Bold (Right (Content "HI")))))
---   , parseMarkdownLine "*_HI_*" == Left (Bold (Right (Content "HI")))
---   , parseMarkdownLine "_*HI*_" == Left (Bold (Right (Content "HI")))
---   , parseMarkdownLine "_**HI**_" == Left (Italics (Right (Bold (Right (Content "HI")))))
---   , parseMarkdownLine "*_*HI*_*" == Left (Italics (Right (Bold (Right (Content "HI")))))
---   , parseMarkdownLine "**_HI_**" == Left (Italics (Right (Bold (Right (Content "HI")))))
---
---   -- Nested Styling
---   , parseMarkdownLine "__*Mixed* Styling__" == Left (Bold (Right (NestRight (Italics (Right (Content "Mixed"))) (Content " Styling"))))
---   , parseMarkdownLine "**Bold _Italic_**" == Left (Bold (Right (NestLeft (Content "Bold ") (Italics (Right (Content "Italic"))))))
---   , parseMarkdownLine "_Italic **Bold**_" == Left (Italics (Right (NestLeft (Content "Italic ") (Bold (Right (Content "Bold"))))))
---   , parseMarkdownLine "**_BoldItalic_**" == Left (Italics (Right (Bold (Right (Content "BoldItalic")))))
---
---   -- Escaped Characters
---   , parseMarkdownLine "\\*Not Bold\\*" == Left (NestLeft (Content "\\") (Italics (Right (Content "Not Bold\\"))))
---   , parseMarkdownLine "Escaped \\# Hashtag" == Left (Content "Escaped \\\\# Hashtag")
---
---   -- Mixed Content within Lists
---   , parseMarkdownLine "1. Item 1  " == Left (OrdListStart (Content "Item 1"))
---   , parseMarkdownLine "- Item  " == Left (UnordList (Content "Item"))
---   , parseMarkdownLine "+ ![Alt text](/path/to/img.jpg)  " == Left (UnordList (Image "/path/to/img.jpg"))
---   , parseMarkdownLine "- [Link](http://example.com)  " == Left (UnordList (Hyperlink "http://example.com" "Link"))
---
---   -- Blockquotes with Nested Formatting
---   , parseMarkdownLine "> **Bold Quote**  " == Left (Block (Just (Bold (Right (Content "Bold Quote")))))
---   , parseMarkdownLine "> _Italic Quote_  " == Left (Block (Just (Italics (Right (Content "Italic Quote")))))
---
---   -- Code Blocks and Inline Code
---   , parseMarkdownLine "    code block  " == Left (Code (Right (Content "code block")))
---   , parseMarkdownLine "`inline code`" == Left (Monospace "inline code")
---
---   -- Headers with Different Styling
---   , parseMarkdownLine "# Header with **Bold**  " == Left (Heading 1 (NestLeft (Content "Header with ") (Bold (Right (Content "Bold")))))
---
---   -- Lists with Incorrect Numbers
---   , parseMarkdownLine "1. First  " == Left (OrdListStart (Content "First"))
---
---   -- Images with Alt Text
---   , parseMarkdownLine "![Alt text](/path/to/img.jpg)" == Left (Image "/path/to/img.jpg")
---
---   -- Horizontal Rules
---   , parseMarkdownLine "---  " == Left (Hline)
---   , parseMarkdownLine "***  " == Left (Hline)
---   , parseMarkdownLine "___  " == Left (Hline)
---
---   -- Edge Cases
---   , parseMarkdownLine "\\*Not Bold\\*" == Left (NestLeft (Content "\\") (Italics (Right (Content "Not Bold\\"))))
---   , parseMarkdownLine "Unclosed *Italic" == Right "Line Parsing error: [PT (Content \"Italic\"),Asterisk,PT (Content \"Unclosed \")]"
---   , parseMarkdownLine "No space-List" == Left (Content "No space-List")
---
---   ]
+test = and (lineLexerTests ++ lineParserTests ++ parseLineTests)
+
+lineLexerTests = [
+  lineLexer "Hello" == [ContentT "Hello"]
+  , lineLexer " Hello" == [ContentT " ",ContentT "Hello"]
+  , lineLexer " Hello " == [ContentT " ",ContentT "Hello",ContentT " "]
+  , lineLexer "Hello " == [ContentT "Hello",ContentT " "]
+  , lineLexer "# Hi" == [Hash,ContentT " ",ContentT "Hi"]
+  , lineLexer "# Hi  " == [Hash,ContentT " ",ContentT "Hi",ReturnT]
+  , lineLexer "## Hi  " == [Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
+  , lineLexer "### Hi  " == [Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
+  , lineLexer "#### Hi  " == [Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
+  , lineLexer "##### Hi  " == [Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
+  , lineLexer "###### Hi  " == [Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
+  , lineLexer "####### Hi  " == [Hash,Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT]
+  , lineLexer "**Hi**" == [Asterisk,Asterisk,ContentT "Hi",Asterisk,Asterisk]
+  , lineLexer "_Hello_" == [UScore,ContentT "Hello",UScore]
+  , lineLexer "`MDStruc`" == [Tick,ContentT "MDStruc",Tick]
+  , lineLexer "    Tabbed!" == [Tab,ContentT "Tabbed",ContentT "!"]
+  , lineLexer "[]" == [LBra,RBra]
+  , lineLexer "[Hello]" == [LBra,ContentT "Hello",RBra]
+  , lineLexer "[.*_-+!?]" == [LBra,Dot,Asterisk,UScore,Dash,Plus,ContentT "!",ContentT "?",RBra]
+  , lineLexer "()" == [LPar,RPar]
+  , lineLexer "\"To be or not to be\"" == [Quo,ContentT "To",ContentT " ",ContentT "be",ContentT " ",ContentT "or",ContentT " ",ContentT "not",ContentT " ",ContentT "to",ContentT " ",ContentT "be",Quo]
+  , lineLexer "  " == [ReturnT]
+  , lineLexer "Return  " == [ContentT "Return",ReturnT]
+  , lineLexer "  Returned" == [ReturnT,ContentT "Returned"]
+  , lineLexer "> Quote this  " == [BlockQuote,ContentT " ",ContentT "Quote",ContentT " ",ContentT "this",ReturnT]
+  , lineLexer "1" == [ContentT "1"]
+  , lineLexer "I like the number 3" == [ContentT "I",ContentT " ",ContentT "like",ContentT " ",ContentT "the",ContentT " ",ContentT "number",ContentT " ",ContentT "3"]
+  , lineLexer "1. " == [List 1]
+  , lineLexer "2003\\." == [ContentT "2",ContentT "0",ContentT "0",ContentT "3",ContentT "."]
+  ]
+
+lineParserTests = [
+  lineParser [ContentT "Hello"] == Left (Content "Hello")
+  , lineParser [ContentT " ",ContentT "Hello",ContentT " "] == Left (Content " Hello ")
+  , lineParser [ContentT " ",ContentT "Hello"] == Left (Content " Hello")
+  , lineParser [ContentT "Hello",ContentT " "] == Left (Content "Hello ")
+  , lineParser [Hash,ContentT " ",ContentT "Hi"] == Right "Line Parsing error: [PT (Content \" Hi\"),Hash]"
+  , lineParser [Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 1 (Content "Hi"))
+  , lineParser [Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 2 (Content "Hi"))
+  , lineParser [Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 3 (Content "Hi"))
+  , lineParser [Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 4 (Content "Hi"))
+  , lineParser [Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 5 (Content "Hi"))
+  , lineParser [Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Left (Heading 6 (Content "Hi"))
+  , lineParser [Hash,Hash,Hash,Hash,Hash,Hash,Hash,ContentT " ",ContentT "Hi",ReturnT] == Right "Line Parsing error: [PT (Heading 6 (Content \"Hi\")),Hash]"
+  , lineParser [Hash,Hash,Hash,ContentT " ",ContentT "#",ReturnT] == Left (Heading 3 (Content "#"))
+  , lineParser [Asterisk,Asterisk,ContentT "Hi",Asterisk,Asterisk] == Left (Bold (Right (Content "Hi")))
+  , lineParser [UScore,ContentT "Hello",UScore] == Left (Italics (Right (Content "Hello")))
+  , lineParser [Tick,ContentT "MDStruc",Tick] == Left (Monospace (Content "MDStruc"))
+  , lineParser [Tab,ContentT "Tabbed",ContentT "!",ReturnT] == Left (Code (Right (Content "Tabbed!")))
+  , lineParser [LBra,RBra] == Left (Content "[]")
+  , lineParser [LBra,ContentT "Hello",RBra] == Right "Line Parsing error: [RBra,PT (Content \"Hello\"),LBra]"
+  , lineParser [ContentT "[Hello]"] == Left (Content "[Hello]")
+  , lineParser [LBra,Dot,Asterisk,UScore,Dash,Plus,ContentT "!",ContentT "?",RBra] == Right "Line Parsing error: [RBra,PT (Content \"!?\"),Plus,Dash,UScore,Asterisk,Dot,LBra]"
+  , lineParser [ContentT "[.*_-+!?]"] == Left (Content "[.*_-+!?]")
+  , lineParser [LPar,RPar] == Left (Content "()")
+  , lineParser [Quo,ContentT "To",ContentT " ",ContentT "be",ContentT " ",ContentT "or",ContentT " ",ContentT "not",ContentT " ",ContentT "to",ContentT " ",ContentT "be",Quo] == Left (Content "\"To be or not to be\"")
+  , lineParser [ReturnT] == Right "Line Parsing error: [ReturnT]"
+  , lineParser [ContentT "Return",ReturnT] == Right "Line Parsing error: [ReturnT,PT (Content \"Return\")]"
+  , lineParser [ReturnT,ContentT "Returned"] == Right "Line Parsing error: [PT (Content \"Returned\"),PT (Content \"  \")]"
+  , lineParser [BlockQuote,ContentT " ",ContentT "Quote",ContentT " ",ContentT "this",ReturnT] == Left (Block (Just (Content "Quote this")))
+  , lineParser [ContentT "1"] == Left (Content "1")
+  , lineParser [ContentT "I",ContentT " ",ContentT "like",ContentT " ",ContentT "the",ContentT " ",ContentT "number",ContentT " ",ContentT "3"] == Left (Content "I like the number 3")
+  , lineParser [List 1,ContentT "Hi",ReturnT] == Left (OrdListStart (Content "Hi"))
+  , lineParser [ContentT "2",ContentT "0",ContentT "0",ContentT "3",Dot] == Left (Content "2003.")
+  ]
+
+parseLineTests = [
+  -- Basic text
+  parseMarkdownLine "Hello" == Left (Content "Hello")
+  , parseMarkdownLine "Hello World" == Left (Content "Hello World")
+
+  -- Simple Bold and Italics
+  , parseMarkdownLine "*HI*" == Left (Italics (Right (Content "HI")))
+  , parseMarkdownLine "**HI**" == Left (Bold (Right (Content "HI")))
+  , parseMarkdownLine "***HI***" == Left (Italics (Right (Bold (Right (Content "HI")))))
+  , parseMarkdownLine "_HI_" == Left (Italics (Right (Content "HI")))
+  , parseMarkdownLine "__HI__" == Left (Bold (Right (Content "HI")))
+  , parseMarkdownLine "___HI___" == Left (Italics (Right (Bold (Right (Content "HI")))))
+  , parseMarkdownLine "*_HI_*" == Left (Bold (Right (Content "HI")))
+  , parseMarkdownLine "_*HI*_" == Left (Bold (Right (Content "HI")))
+  , parseMarkdownLine "_**HI**_" == Left (Italics (Right (Bold (Right (Content "HI")))))
+  , parseMarkdownLine "*_*HI*_*" == Left (Italics (Right (Bold (Right (Content "HI")))))
+  , parseMarkdownLine "**_HI_**" == Left (Italics (Right (Bold (Right (Content "HI")))))
+
+  -- Nested Styling
+  , parseMarkdownLine "__*Mixed* Styling__" == Left (Bold (Right (NestRight (Italics (Right (Content "Mixed"))) (Content " Styling"))))
+  , parseMarkdownLine "**Bold _Italic_**" == Left (Bold (Right (NestLeft (Content "Bold ") (Italics (Right (Content "Italic"))))))
+  , parseMarkdownLine "_Italic **Bold**_" == Left (Italics (Right (NestLeft (Content "Italic ") (Bold (Right (Content "Bold"))))))
+  , parseMarkdownLine "**_BoldItalic_**" == Left (Italics (Right (Bold (Right (Content "BoldItalic")))))
+
+  -- Escaped Characters
+  , parseMarkdownLine "\\*Not Bold\\*" == Left (Content "*Not Bold*")
+  , parseMarkdownLine "Escaped \\# Hashtag" == Left (Content "Escaped \\# Hashtag")
+
+  -- Mixed Content within Lists
+  , parseMarkdownLine "1. Item 1  " == Left (OrdListStart (Content "Item 1"))
+  , parseMarkdownLine "- Item  " == Left (UnordList (Content "Item"))
+  , parseMarkdownLine "+ ![Alt text](/path/to/img.jpg)  " == Left (UnordList (Image "/path/to/img.jpg"))
+  , parseMarkdownLine "- [Link](http://example.com)  " == Left (UnordList (Hyperlink "http://example.com" "Link"))
+
+  -- Blockquotes with Nested Formatting
+  , parseMarkdownLine "> **Bold Quote**  " == Left (Block (Just (Bold (Right (Content "Bold Quote")))))
+  , parseMarkdownLine "> _Italic Quote_  " == Left (Block (Just (Italics (Right (Content "Italic Quote")))))
+
+  -- Code Blocks and Inline Code
+  , parseMarkdownLine "    code block  " == Left (Code (Right (Content "code block")))
+  , parseMarkdownLine "`inline code`" == Left (Monospace (Content "inline code"))
+
+  -- Headers with Different Styling
+  , parseMarkdownLine "# Header with **Bold**  " == Left (Heading 1 (NestLeft (Content "Header with ") (Bold (Right (Content "Bold")))))
+
+  -- Lists with Incorrect Numbers
+  , parseMarkdownLine "1. First  " == Left (OrdListStart (Content "First"))
+
+  -- Images with Alt Text
+  , parseMarkdownLine "![Alt text](/path/to/img.jpg)" == Left (Image "/path/to/img.jpg")
+
+  -- Horizontal Rules
+  , parseMarkdownLine "---  " == Left (Hline)
+  , parseMarkdownLine "***  " == Left (Hline)
+  , parseMarkdownLine "___  " == Left (Hline)
+
+  -- Edge Cases
+  , parseMarkdownLine "Unclosed *Italic" == Right "Line Parsing error: [PT (Content \"Italic\"),Asterisk,PT (Content \"Unclosed \")]"
+  , parseMarkdownLine "No space-List" == Left (Content "No space-List")
+
+  ]
