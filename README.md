@@ -16,8 +16,8 @@ To be clear, all subtle rule/syntax changes/additions made to appease my program
 To install the converter, follow these steps:
 1. Clone the repository: `git clone \[repository URL\]`  
 2. Navigate to the repository directory: `cd \[repository name\]`  
-3. Run the compiler: `make convert \[yourFile.md\]`  
-    * Replace `yourFile.md` with the name of your Markdown file.  
+3. Run the compiler: `make convert`  
+    * Run `make clean` to remove all the `output.tex` files (NOTE: The converter overwrites `output.tex` anyways)  
 5. Compile your new `output.tex` file!  
 
 ## How it Works  
