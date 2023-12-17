@@ -1,0 +1,107 @@
+\documentclass{article}
+% Package for using images
+    \usepackage{graphicx}
+
+% Code to handle lists
+    % Ensures nested ordered lists start at 1
+    \renewcommand{\theenumii}{\arabic{enumii}}
+    \renewcommand{\labelenumii}{\theenumii.}
+
+    % Ensures nested unordered lists are represented by a hollow circle like in Markdown
+    \renewcommand{\labelitemii}{$\circ$}
+
+% Remove section numbering as well
+    \renewcommand{\thesection}{}
+    \renewcommand{\thesubsection}{}
+    \renewcommand{\thesubsubsection}{}
+
+% Package and additional code for handling hyperlink formatting
+    \usepackage{hyperref}
+    \hypersetup{
+        colorlinks=true,
+        linkcolor=black,
+        filecolor=magenta,
+        urlcolor=blue,
+        pdftitle={Markdown Converted to LaTeX},
+        pdfpagemode=FullScreen,
+        }
+    \urlstyle{same}
+    \renewcommand{\UrlFont}{\normalfont\itshape\underline}
+    \usepackage[dvipsnames]{xcolor}
+
+% Package for handling block quotes
+    \usepackage{csquotes}
+
+\begin{document}
+
+% This removes page numbers from every page,
+% Markdown doesn't use them so we don't need them!
+    \pagestyle{empty}
+
+\section{Haskell-based Markdown to LaTeX Converter}
+
+
+\subsection{Introduction}
+
+This program converts Markdown files (\texttt{.md}) to LaTeX files (\texttt{.tex}). The aim is to make LaTeX more accessible, enabling users to write in Markdown -- a language they are familiar with -- and still leverage the advanced formatting power of LaTeX. This approach helps bridge the gap between Markdown’s user-friendliness/intuitiveness and LaTeX's comprehensive typesetting features.
+
+Currently, the program supports only \href{https://www.markdownguide.org/basic-syntax/}{basic Markdown syntax} excluding reference-style links, offering a foundation for future enhancements.
+
+
+\subsection{Pitfalls / Noteworthy Features}
+
+To be clear, all subtle rule/syntax changes/additions made to appease my program will still compile regularly in a normal Markdown compiler. To prove it, this \texttt{.md} file has been converted using my converter! See \texttt{README.tex} (The only exception I have found is escape characters in monospace/code as you will see in this file)
+
+\begin{itemize}
+    \item  Because of the pattern matching algorithm when parsing each line, a list item, heading, horizontal rule, or code block must be followed by a return character represented by two spaces (\texttt{  \texttt{) or a newline character represented in the traditional fashion (}$\backslash$n}).
+    \item  Should any form of error occur when converting, the program will place a (hopefully) detailed error message at the top of the \texttt{output.tex} file between the prelude and the actually converted body. This should be properly interpreted by any LaTeX compiler as text.
+    \item  Because numbers followed dots (\texttt{.}) are used to represent lists, you will have to escape the dot when ending a sentence with a number.
+\begin{itemize}
+    \item  e.g., \texttt{I like \#1.} is not valid, but \texttt{I like \#1$\backslash$.} is.
+\end{itemize}
+    \item Similarly, because parentheses and braces are used to represent Hyperlinks and Image references, you may need to escape them when using them in text.
+\end{itemize}
+
+
+\subsection{Installation / Usage}
+
+To install the converter, follow these steps:
+
+\begin{enumerate}
+    \item Clone the repository: \texttt{git clone [repository URL]}
+    \item Navigate to the repository directory: \texttt{cd [repository name]}
+    \item Run the compiler: \texttt{make convert [yourFile.md]}
+\begin{itemize}
+    \item  Replace \texttt{yourFile.md} with the name of your Markdown file.
+\end{itemize}
+    \item Compile your new \texttt{output.tex} file!
+\end{enumerate}
+
+
+\subsection{How it Works}
+
+The conversion process involves a step-by-step lexical analysis of the Markdown file. Each line is analyzed and represented in a custom data structure, capturing the syntactic patterns of Markdown (e.g., headings denoted by hash marks). This internal representation then undergoes contextual analysis, considering each line’s relation to its neighbors, ensuring coherent and accurate conversion into LaTeX; this is specifically important for multi-line structures such as lists.
+
+
+\subsection{Contributing}
+
+This project is by no means sophisticated or clean, it was simply a final project for one of my courses. That being said, feel free to refine, add to, or alter it in any way! This project follows the GNU General Public License 3.0 which means you are welcome to distribute the program alongside any of your alterations so long as you credit the original author (me: Hermès Henry) and maintain the GNU General Public License 3.0 as well.
+
+
+\subsection{License}
+
+This project is licensed under the GNU General Public License 3.0 -- see the \texttt{LICENSE} file for details.
+
+
+\subsection{Acknowledgement}
+
+This project was done as part of a final project for a functional programming course taught by Dr. Andrew Polonksy at Appalachian State University; huge thanks to him for everything he taught me!
+
+
+\subsection{Credit / Contact Information}
+
+My name is Hermès Henry and I made this project during my time as a Computer Science student at Appalachian State University.
+
+For more information, contact me by \href{mailto:henryhe@appstate.edu}{email}.
+
+\end{document}
